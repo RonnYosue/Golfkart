@@ -1,0 +1,80 @@
+<!-- Topbar -->
+<div class="topbar">
+    <h1 class="titulo-animado">
+      <span>G</span><span>O</span><span>L</span><span>F</span><span>K</span><span>A</span><span>R</span><span>T</span>
+    </h1>
+    <div class="topbar-logo-wrapper">
+      <img src="loguito-uleam.png" class="topbar-logo" alt="Logo Uleam">
+    </div>
+    <div class="saludo-usuario">{{ saludo }}</div>
+  </div>
+  
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed" id="sidebar">
+    <button class="menu-button" (click)="toggleSidebar()">
+      <img src="menu.png" alt="Menú">
+    </button>
+    <button (click)="mostrarModal('modalReserva')">Reservar</button>
+    <button (click)="realizarReserva()">Ver mis Reservas</button>
+    <button (click)="cerrarSesion()" style="background-color: #b82633;">Cerrar Sesión</button>
+  </div>
+  
+  <!-- Contenido principal -->
+  <div class="main-content" [class.collapsed]="sidebarCollapsed">
+    <div #mapContainer id="map"></div>
+  </div>
+  
+  <!-- Modal de Ver Reservas -->
+  <div id="modalReservas" class="modal" [class.hidden]="!modalReservasVisible">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal('modalReservas')">&times;</span>
+      <h2>Mis Reservas</h2>
+      <div id="listaReservas">
+        <ng-container *ngIf="reservasFiltradas.length > 0; else noReservas">
+          <div *ngFor="let reserva of reservasFiltradas" class="reserva-item">
+            <strong>Carrito:</strong> {{ reserva.carritoId }} <br>
+            <strong>Fecha:</strong> {{ reserva.fecha }} <br>
+            <strong>Hora:</strong> {{ reserva.hora }} <br>
+            <strong>Inicio:</strong> {{ reserva.inicioId }} <br>
+            <strong>Destino:</strong> {{ reserva.destinoId }} <br>
+            <strong>Estado:</strong> <span>{{ reserva.estado }}</span>
+            <button *ngIf="reserva.estado === 'confirmada'" (click)="iniciarViajeCliente(reserva)">Iniciar viaje</button>
+          </div>
+        </ng-container>
+        <ng-template #noReservas>
+          <p>No tienes reservas.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de reserva -->
+  <div id="modalReserva" class="modal" [class.hidden]="!modalReservaVisible">
+    <div class="modal-content">
+      <h2>Reservar carrito</h2>
+      <form (ngSubmit)="confirmarReserva()" #formReservas="ngForm">
+        <p>¿Deseas hacer una reserva de este carrito?</p>
+        <label for="fecha">Elige una fecha:</label>
+        <input type="date" id="fecha" name="fecha" [(ngModel)]="reservaForm.fecha" required>
+        <label for="hora">Elige una hora:</label>
+        <input type="time" id="hora" name="hora" [(ngModel)]="reservaForm.hora" required>
+  
+        <label for="inicio">Seleccione el inicio:</label>
+        <select id="inicio" name="inicio" [(ngModel)]="reservaForm.inicioId" required>
+          <option *ngFor="let lugar of lugares" [value]="lugar.id">{{ lugar.nombre }}</option>
+        </select>
+        <label for="destino">Seleccione el destino:</label>
+        <select id="destino" name="destino" [(ngModel)]="reservaForm.destinoId" required>
+          <option *ngFor="let lugar of lugares" [value]="lugar.id">{{ lugar.nombre }}</option>
+        </select>
+        <label for="asientos">Seleccione la cantidad de asientos:</label>
+        <select name="asientos" id="asientos" [(ngModel)]="reservaForm.asientos" required>
+          <option [value]="1">1</option>
+          <option [value]="2">2</option>
+          <option [value]="3">3</option>
+        </select>
+        <button type="button" (click)="confirmarReserva()">Confirmar</button>
+        <button type="button" (click)="cerrarModal('modalReserva')">Cancelar</button>
+      </form>
+    </div>
+  </div>

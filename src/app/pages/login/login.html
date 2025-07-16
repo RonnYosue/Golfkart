@@ -1,0 +1,54 @@
+<section class="vh-100">
+    <div class="container-fluid h-custom">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        
+        <!-- Imagen lateral -->
+        <div class="col-md-9 col-lg-6 col-xl-5">
+        <img src="imagen.png" class="img-fluid" alt="Imagen de muestra">
+        </div>
+
+        <!-- Formulario de login -->
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+        <form id="loginForm" (submit)="onSubmit($event)">
+            <div class="titulo-animado mb-4 text-center">
+                <span>G</span><span>O</span><span>L</span><span>F</span><span>K</span><span>A</span><span>R</span><span>T</span>
+              </div>
+              
+            <p class="lead fw-normal mb-0 me-3">Inicie Sesión</p>
+
+            <!-- Campo de correo -->
+            <div class="form-outline mb-4">
+            <label class="form-label" for="formEmail">Dirección de correo electrónico</label>
+            <input type="email" id="formEmail" class="form-control form-control-lg"
+                placeholder="Introduzca una dirección de correo electrónico válida" />
+            </div>
+
+            <!-- Campo de contraseña -->
+            <div class="form-outline mb-3">
+            <label class="form-label" for="formPassword">Contraseña</label>
+            <input type="password" id="formPassword" class="form-control form-control-lg"
+                placeholder="Introducir contraseña" />
+            </div>
+
+            <!-- Botón de login -->
+            <div class="text-center text-lg-start mt-4 pt-2">
+            <button type="submit" class="btn btn-success btn-lg px-5">Login</button>
+            <p class="small fw-bold mt-2 pt-1 mb-0">
+                ¿No tienes una cuenta? 
+                <a (click)="irCrearUsuario()" class="link-danger" style="cursor:pointer;">Regístrate</a>
+            </p>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+
+    <!-- Footer con redes sociales -->
+    <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-success">
+    <div class="text-white mb-3 mb-md-0">
+        © 2025 Todos los derechos reservados
+    </div>
+    </div>
+</section>
+
+

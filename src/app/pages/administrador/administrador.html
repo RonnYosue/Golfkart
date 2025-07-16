@@ -1,0 +1,74 @@
+<!-- Topbar -->
+<div class="topbar">
+    <h1 class="titulo-animado">
+      <span>G</span><span>O</span><span>L</span><span>F</span><span>K</span><span>A</span><span>R</span><span>T</span>
+    </h1>
+    <div class="topbar-logo-wrapper">
+      <img src="loguito-uleam.png" class="topbar-logo" alt="Logo Uleam">
+    </div>
+    <div class="saludo-usuario">{{ saludo }}</div>
+  </div>
+  
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed" id="sidebar">
+    <button class="menu-button" (click)="toggleSidebar()">
+      <img src="menu.png" alt="Menú">
+    </button>
+    <button (click)="irCrearUsuario()">Crear Usuario</button>
+    <button (click)="mostrarModal('modalAgregarCarrito')">Agregar Carritos</button>
+    <button (click)="realizarReserva()">Ver Reservas</button>
+    <button (click)="cerrarSesion()" style="background-color: #b82633;">Cerrar Sesión</button>
+  </div>
+  
+  <!-- Contenido principal -->
+  <div class="main-content" [class.collapsed]="sidebarCollapsed">
+    <div #mapContainer id="map"></div>
+  </div>
+  
+  <!-- Modal Agregar Carrito -->
+  <div class="modal" [class.hidden]="!modalAgregarCarritoVisible">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal('modalAgregarCarrito')">&times;</span>
+      <h2>Agregar Carrito</h2>
+      <form (ngSubmit)="agregarCarrito()" #formAgregarCarrito="ngForm">
+        <label for="carritoId">ID del carrito:</label>
+        <input type="text" id="carritoId" name="carritoId" [(ngModel)]="carritoIdInput" required>
+  
+        <label for="ubicacion">Ubicación Inicial:</label>
+        <select id="ubicacion" name="ubicacion" [(ngModel)]="ubicacionSeleccionada" disabled>
+          <option *ngIf="nodoPredeterminado" [value]="nodoPredeterminado.id">{{ nodoPredeterminado.nombre }}</option>
+        </select>
+  
+        <label for="asientos">Asientos:</label>
+        <select id="asientos" name="asientos" [(ngModel)]="asientosInput" required>
+          <option [value]="3">3</option>
+        </select>
+  
+        <button type="submit">Guardar</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal Ver Reservas -->
+  <div class="modal" [class.hidden]="!modalReservasVisible">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal('modalReservas')">&times;</span>
+      <h2>Reservas</h2>
+      <div id="listaReservas">
+        <ng-container *ngIf="reservas.length > 0; else noReservas">
+          <div *ngFor="let reserva of reservas" class="reserva-item">
+            <strong>Carrito:</strong> {{ reserva.carritoId }} <br>
+            <strong>Cliente:</strong> {{ reserva.clienteEmail }} <br>
+            <strong>Fecha:</strong> {{ reserva.fecha }} <br>
+            <strong>Hora:</strong> {{ reserva.hora }} <br>
+            <strong>Inicio:</strong> {{ reserva.inicioId }} <br>
+            <strong>Destino:</strong> {{ reserva.destinoId }} <br>
+            <strong>Estado:</strong> <span>{{ reserva.estado }}</span>
+          </div>
+        </ng-container>
+        <ng-template #noReservas>
+          <p>No hay reservas.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>

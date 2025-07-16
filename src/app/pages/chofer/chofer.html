@@ -1,0 +1,92 @@
+<!-- Topbar -->
+<div class="topbar">
+    <h1 class="titulo-animado">
+      <span>G</span><span>O</span><span>L</span><span>F</span><span>K</span><span>A</span><span>R</span><span>T</span>
+    </h1>
+    <div class="topbar-logo-wrapper">
+      <img src="loguito-uleam.png" class="topbar-logo" alt="Logo Uleam">
+    </div>
+    <div class="saludo-usuario">{{ saludo }}</div>
+  </div>
+  
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed" id="sidebar">
+    <button class="menu-button" (click)="toggleSidebar()">
+      <img src="menu.png" alt="Menú">
+    </button>
+    <button (click)="realizarReserva()">Ver Reservas</button>
+    <button (click)="iniciarServicio()">Iniciar Servicio</button>
+    <button (click)="realizarMantenimiento()">Mantenimiento</button>
+    <button (click)="finalizarServicio()" style="background-color: #b82633;">Finalizar Servicio</button>
+    <button (click)="cerrarSesion()" style="background-color: #b82633;">Cerrar Sesión</button>
+  </div>
+  
+  <div id="estado-superior">
+    <span [class.punto]="true" [class.gris]="!enServicio" [class.verde]="enServicio"></span>
+    <span class="texto-estado">
+      {{ enServicio ? 'En servicio (Carrito ' + carritoEnServicio + ')' : 'Fuera de servicio' }}
+    </span>
+  </div>
+  
+  <!-- Contenido principal -->
+  <div class="main-content" [class.collapsed]="sidebarCollapsed">
+    <div #mapContainer id="map"></div>
+  </div>
+  
+  <!-- Alertas Bootstrap -->
+  <div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+  
+  <!-- Modales -->
+  
+  <!-- Modal Iniciar Servicio -->
+  <div class="modal" [class.hidden]="!modalIniciarServicioVisible">
+    <div class="modal-content">
+      <h2>Ingrese el ID del carrito:</h2>
+      <form (ngSubmit)="confirmarinicioServicio()" #formIniciarServicio="ngForm">
+        <label for="carritoId">ID del carrito:</label>
+        <input type="text" id="carritoId" name="carritoId" [(ngModel)]="carritoIdInput" required>
+        <button type="button" (click)="confirmarinicioServicio()">Confirmar</button>
+        <button type="button" (click)="cerrarModal('modalIniciarServicio')">Cancelar</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal Mantenimiento -->
+  <div class="modal" [class.hidden]="!modalRealizarMantenimientoVisible">
+    <div class="modal-content">
+      <h2>Mantenimiento:</h2>
+      <form (ngSubmit)="confirmarRealizarMantenimiento()" #formMantenimiento="ngForm">
+        <label for="carritoIdMantenimiento">ID del carrito:</label>
+        <input type="text" id="carritoIdMantenimiento" name="carritoIdMantenimiento" [(ngModel)]="carritoIdMantenimiento" required>
+        <label for="tipoMantenimiento">Tipo de Mantenimiento:</label>
+        <input type="text" id="tipoMantenimiento" name="tipoMantenimiento" [(ngModel)]="tipoMantenimiento" required>
+        <button type="button" (click)="confirmarRealizarMantenimiento()">Confirmar</button>
+        <button type="button" (click)="cerrarModal('modalRealizarMantenimiento')">Cancelar</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal Ver Reservas -->
+  <div class="modal" [class.hidden]="!modalReservasVisible">
+    <div class="modal-content">
+      <span class="close" (click)="cerrarModal('modalReservas')">&times;</span>
+      <h2>Reservas</h2>
+      <div id="listaReservas">
+        <ng-container *ngIf="reservas.length > 0; else noReservas">
+          <div *ngFor="let reserva of reservas" class="reserva-item">
+            <strong>Carrito:</strong> {{ reserva.carritoId }} <br>
+            <strong>Cliente:</strong> {{ reserva.clienteEmail }} <br>
+            <strong>Fecha:</strong> {{ reserva.fecha }} <br>
+            <strong>Hora:</strong> {{ reserva.hora }} <br>
+            <strong>Inicio:</strong> {{ reserva.inicioId }} <br>
+            <strong>Destino:</strong> {{ reserva.destinoId }} <br>
+            <strong>Estado:</strong> <span>{{ reserva.estado }}</span>
+            <button *ngIf="reserva.estado === 'pendiente'" (click)="confirmarReservaChofer(reserva.id)">Confirmar</button>
+          </div>
+        </ng-container>
+        <ng-template #noReservas>
+          <p>No hay reservas.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>

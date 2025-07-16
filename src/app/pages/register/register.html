@@ -1,0 +1,102 @@
+<!-- Barra superior -->
+<div class="topbar">
+    <h1 class="titulo-animado">
+      <span>G</span><span>O</span><span>L</span><span>F</span><span>K</span><span>A</span><span>R</span><span>T</span>
+    </h1>
+    <div class="topbar-logo-wrapper">
+      <img src="loguito-uleam.png" class="topbar-logo" alt="Logo Uleam" />
+    </div>
+  </div>
+  
+  <div class="container">
+    <form id="registerForm" (submit)="onSubmit($event)">
+      <h2>Registrar Nuevo Usuario</h2>
+  
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+          [(ngModel)]="nombre"
+          class="form-control"
+        />
+      </div>
+  
+      <!-- Apellido -->
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input
+          type="text"
+          id="apellido"
+          name="apellido"
+          required
+          [(ngModel)]="apellido"
+          class="form-control"
+        />
+      </div>
+  
+      <!-- Tipo de Usuario -->
+      <div class="form-group">
+        <label for="tipo">Tipo de Usuario:</label>
+        <select
+          id="tipo"
+          name="tipo"
+          [(ngModel)]="tipo"
+          class="form-control"
+          required
+        >
+          <option value="">Seleccione un tipo</option>
+          <option value="CLIENTE">Usuario</option>
+          <option value="CHOFER">Chofer</option>
+          <option value="ADMINISTRADOR">Administrador</option>
+        </select>
+      </div>
+  
+      <!-- Correo electrónico -->
+      <div class="form-group">
+        <label for="correo">Correo Electrónico</label>
+        <input
+          type="email"
+          id="correo"
+          name="correo"
+          required
+          [(ngModel)]="email"
+          class="form-control"
+        />
+      </div>
+  
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          [(ngModel)]="password"
+          class="form-control"
+        />
+      </div>
+  
+      <!-- Confirmar contraseña -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          required
+          [(ngModel)]="confirmPassword"
+          class="form-control"
+        />
+        <small id="passwordError" class="text-danger">{{ passwordError }}</small>
+      </div>
+  
+      <!-- Botón de envío -->
+      <button type="submit" class="btn btn-success">Registrarse</button>
+    </form>
+  </div>
+  
