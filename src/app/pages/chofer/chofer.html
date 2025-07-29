@@ -17,6 +17,7 @@
     <button (click)="realizarReserva()">Ver Reservas</button>
     <button (click)="iniciarServicio()">Iniciar Servicio</button>
     <button (click)="realizarMantenimiento()">Mantenimiento</button>
+    <button (click)="mostrarModal('modalEditarPerfil')">Editar Perfil</button>
     <button (click)="finalizarServicio()" style="background-color: #b82633;">Finalizar Servicio</button>
     <button (click)="cerrarSesion()" style="background-color: #b82633;">Cerrar Sesión</button>
   </div>
@@ -90,3 +91,27 @@
       </div>
     </div>
   </div>
+
+    <!-- Modal Editar Perfil -->
+<div class="modal" [class.hidden]="!modalEditarPerfilVisible">
+  <div class="modal-content">
+    <span class="close" (click)="cerrarModal('modalEditarPerfil')">&times;</span>
+    <h2>Editar Perfil</h2>
+    <form (ngSubmit)="guardarPerfil()" #formEditarPerfil="ngForm">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" [(ngModel)]="perfilForm.nombre" required>
+      
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" [(ngModel)]="perfilForm.email" required>
+      
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" [(ngModel)]="perfilForm.password" required>
+      
+      <label for="tipo">Tipo de Usuario:</label>
+      <input type="text" id="tipo" name="tipo" [(ngModel)]="perfilForm.tipo" readonly>
+      
+      <button type="button" (click)="guardarPerfil()">Guardar</button>
+      <button type="button" (click)="cerrarModal('modalEditarPerfil')">Cancelar</button>
+    </form>
+  </div>
+</div>

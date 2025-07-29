@@ -20,6 +20,15 @@ export class  Chofer implements OnInit {
   saludo: string = '';
   sidebarCollapsed = false;
 
+  modalEditarPerfilVisible = false;
+
+  perfilForm = {
+    nombre: '',
+    email: '',
+    password: '',
+    tipo: ''
+  };
+
   modalIniciarServicioVisible = false;
   modalRealizarMantenimientoVisible = false;
   modalReservasVisible = false;
@@ -99,28 +108,65 @@ export class  Chofer implements OnInit {
   confirmarinicioServicio() {
     const inputId = this.carritoIdInput.trim();
     const carritos = JSON.parse(localStorage.getItem('carritos') || '[]');
+  
+    // Validar si hay carritos en el sistema
+    if (!carritos || carritos.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sin carritos',
+        text: 'Aún no se ha puesto en servicio ningún carrito.',
+      });
+      return;
+    }
+  
     const carrito = carritos.find((c: any) => c.id === inputId);
-
+  
     if (!inputId) {
-      this.mostrarAlertaBootstrap("Por favor, ingresa un ID de carrito.", "warning");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo vacío',
+        text: 'Por favor, ingresa un ID de carrito.',
+      });
       return;
     }
-
+  
     if (!carrito) {
-      this.mostrarAlertaBootstrap("Por favor, ingresa un ID de carrito.", "warning");
+      Swal.fire({
+        icon: 'error',
+        title: 'Carrito no encontrado',
+        text: 'Por favor, ingresa un ID de carrito válido.',
+      });
       return;
     }
-
+  
     this.enServicio = true;
     this.carritoEnServicio = carrito.id;
     this.cerrarModal('modalIniciarServicio');
-    this.mostrarAlertaBootstrap(`¡Ahora estás en servicio con el carrito ${carrito.id}!`, "success");
+    
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: `¡Ahora estás en servicio con el carrito ${carrito.id}!`,
+    });
+    
     this.carritoIdInput = '';
   }
 
   finalizarServicio() {
+    if (!this.enServicio) {
+      // Mostrar SweetAlert si no está en servicio
+      Swal.fire({
+        icon: 'warning',
+        title: 'No estás en servicio',
+        text: 'No puedes finalizar el servicio porque no estás en servicio actualmente.',
+      });
+      return;
+    }
+  
+    // Si sí está en servicio, finalizar normalmente
     this.enServicio = false;
     this.carritoEnServicio = null;
+    this.mostrarAlertaBootstrap("Servicio finalizado correctamente.", "success");
   }
 
   realizarMantenimiento() {
@@ -130,7 +176,7 @@ export class  Chofer implements OnInit {
   confirmarRealizarMantenimiento() {
     const carritoId = this.carritoIdMantenimiento.trim();
     const tipoMantenimiento = this.tipoMantenimiento.trim();
-
+  
     if (!carritoId || !tipoMantenimiento) {
       Swal.fire({
         icon: 'warning',
@@ -139,13 +185,25 @@ export class  Chofer implements OnInit {
       });
       return;
     }
-
+  
+    // --- NUEVO: Guardar mantenimiento en localStorage ---
+    const mantenimientos = JSON.parse(localStorage.getItem('mantenimientos') || '[]');
+    const nuevoMantenimiento = {
+      carritoId,
+      tipoMantenimiento,
+      fecha: new Date().toLocaleString(),
+      chofer: JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}').nombre || 'Desconocido'
+    };
+    mantenimientos.push(nuevoMantenimiento);
+    localStorage.setItem('mantenimientos', JSON.stringify(mantenimientos));
+    // ----------------------------------------------------
+  
     Swal.fire({
       icon: 'success',
       title: '¡Éxito!',
       text: `Mantenimiento registrado para el carrito ${carritoId}.`,
     });
-
+  
     this.cerrarModal('modalRealizarMantenimiento');
     this.carritoIdMantenimiento = '';
     this.tipoMantenimiento = '';
@@ -159,6 +217,9 @@ export class  Chofer implements OnInit {
     } else if (id === 'modalReservas') {
       this.modalReservasVisible = true;
       this.mostrarReservas();
+    } else if (id === 'modalEditarPerfil') {
+      this.modalEditarPerfilVisible = true;
+      this.cargarDatosPerfil();
     }
   }
 
@@ -169,6 +230,8 @@ export class  Chofer implements OnInit {
       this.modalRealizarMantenimientoVisible = false;
     } else if (id === 'modalReservas') {
       this.modalReservasVisible = false;
+    } else if (id === 'modalEditarPerfil') {
+      this.modalEditarPerfilVisible = false;
     }
   }
 
@@ -220,4 +283,116 @@ export class  Chofer implements OnInit {
       setTimeout(() => alerta.remove(), 500);
     }, tiempo);
   }
+   //funciones para editar el perfil 
+
+cargarDatosPerfil() {
+  const user = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
+  if (user) {
+    this.perfilForm = {
+      nombre: user.nombre || '',
+      email: user.email || '',
+      password: user.password || '',
+      tipo: user.tipo || ''
+    };
+  }
+}
+
+guardarPerfil() {
+  const { nombre, email, password, tipo } = this.perfilForm;
+
+  // Validaciones
+  if (!nombre.trim()) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo vacío',
+      text: 'Por favor, ingresa tu nombre.',
+    });
+    return;
+  }
+
+  if (!email.trim()) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo vacío',
+      text: 'Por favor, ingresa tu email.',
+    });
+    return;
+  }
+
+  if (!password.trim()) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo vacío',
+      text: 'Por favor, ingresa tu contraseña.',
+    });
+    return;
+  }
+
+  // Validar formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Email inválido',
+      text: 'Por favor, ingresa un email válido.',
+    });
+    return;
+  }
+
+  // Obtener usuarios del localStorage
+  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+  const usuarioActivo = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
+
+  // Verificar si el email ya existe (excepto el usuario actual)
+  const emailExiste = usuarios.find((u: any) => u.email === email && u.email !== usuarioActivo.email);
+  if (emailExiste) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Email ya existe',
+      text: 'Ya existe un usuario con ese email.',
+    });
+    return;
+  }
+
+  // Actualizar usuario en el array de usuarios
+  const indiceUsuario = usuarios.findIndex((u: any) => u.email === usuarioActivo.email);
+  if (indiceUsuario !== -1) {
+    usuarios[indiceUsuario] = {
+      ...usuarios[indiceUsuario],
+      nombre: nombre.trim(),
+      email: email.trim(),
+      password: password.trim()
+    };
+
+    // Guardar en localStorage
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+    // Actualizar sessionStorage
+    const usuarioActualizado = {
+      ...usuarioActivo,
+      nombre: nombre.trim(),
+      email: email.trim(),
+      password: password.trim()
+    };
+    sessionStorage.setItem("usuarioActivo", JSON.stringify(usuarioActualizado));
+
+    // Actualizar saludo
+    this.setSaludo();
+
+    // Cerrar modal y mostrar éxito
+    this.cerrarModal('modalEditarPerfil');
+    
+    Swal.fire({
+      icon: 'success',
+      title: '¡Perfil actualizado!',
+      text: 'Tus datos han sido actualizados correctamente.',
+    });
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo actualizar el perfil.',
+    });
+  }
+}
 }

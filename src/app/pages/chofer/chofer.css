@@ -242,3 +242,154 @@ body {
     white-space: nowrap;
   }
   
+  .sidebar button.menu-button {
+    width: 70px;      /* O el ancho que prefieras, por ejemplo 40px o 50px */
+    min-width: 0;     /* Para que no se expanda */
+    max-width: 70px;  /* Limita el ancho máximo */
+    margin-left: auto;
+    margin-right: auto;
+    display: block;   /* Centra el botón horizontalmente */
+    box-sizing: border-box;
+    padding: 4px;
+  }
+
+  .sidebar.collapsed button.menu-button {
+  width: 40px;         /* Igual que los otros botones colapsados */
+  min-width: 0;
+  max-width: 48px;
+  padding: 4px;
+  margin: 0 auto 10px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0;        /* Oculta cualquier texto accidental */
+  background-color: #109b23; /* Igual que los otros botones */
+  border-radius: 10px;
+  box-sizing: border-box;
+  transition: width 0.3s;
+}
+
+.sidebar.collapsed button.menu-button img {
+  width: 28px;
+  height: 28px;
+}
+
+
+
+
+
+/* --------------------------- */
+/* ESTILOS RESPONSIVE MÓVILES */
+/* --------------------------- */
+@media (max-width: 768px) {
+
+  /* Topbar */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 10px;
+  }
+
+  .titulo-animado {
+    font-size: 24px;
+    position: static;
+    margin-bottom: 10px;
+  }
+
+  .topbar-logo-wrapper {
+    position: static;
+    transform: none;
+    justify-content: flex-start;
+  }
+
+  .topbar-logo {
+    height: 40px;
+  }
+
+  .saludo-usuario {
+    position: static;
+    transform: none;
+    font-size: 12px;
+    padding: 6px 12px;
+    margin-top: 10px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 10px 0;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .sidebar button {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .sidebar.collapsed {
+    display: none;
+  }
+
+  .sidebar button.menu-button {
+    display: none;
+  }
+
+  /* Main content y mapa */
+  .main-content {
+    margin: 0;
+    padding: 10px;
+  }
+
+  .main-content.collapsed {
+    margin: 0;
+  }
+
+  #map {
+    width: 100%;
+    height: 400px;
+    margin: 100px auto 20px auto;
+  }
+
+  /* Estado superior */
+  #estado-superior {
+    top: 10px;
+    transform: translateX(0);
+    left: 10px;
+    right: 10px;
+    width: auto;
+    padding: 6px 12px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Modales */
+  .modal-content {
+    width: 90%;
+    padding: 15px 20px;
+  }
+
+  .modal-content input,
+  .modal-content button {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  /* Reservas */
+  .reserva-item {
+    font-size: 13px;
+  }
+
+  .reserva-item button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
