@@ -13,6 +13,7 @@ declare let google: any;
   templateUrl: './administrador.html',
   styleUrls: ['./administrador.css'],
 })
+//aqui empieza la clase que se exporta en administrador.ts
 export class Administrador implements OnInit {
   constructor(private router: Router) {}
   @ViewChild('mapContainer', { static: true }) mapElement!: ElementRef;
