@@ -1,58 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-
-interface Usuario {
-  email: string;
-  password: string;
-  tipo: string;
-}
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  styleUrls: ['./login.css'],
 })
-export class Login implements OnInit {
+export class Login {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
 
-  usuarios: Usuario[] = [];
-
-  constructor(private router: Router) {}
-
-  ngOnInit(): void {
-    fetch('usuarios.json')
-      .then(response => response.json())
-      .then(data => {
-        const usuariosLocal = JSON.parse(localStorage.getItem('usuarios') || '[]');
-        this.usuarios = data.concat(usuariosLocal);
-      })
-      .catch(error => {
-        console.error('Error cargando usuarios:', error);
-        this.usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-      });
-  }
-
-  onSubmit(event: Event): void {
+  async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
 
-    const emailInput = (document.getElementById('formEmail') as HTMLInputElement).value.trim().toLowerCase();
-    const passwordInput = (document.getElementById('formPassword') as HTMLInputElement).value.trim();
+    const emailInput = (
+      document.getElementById('formEmail') as HTMLInputElement
+    ).value
+      .trim()
+      .toLowerCase();
+    const passwordInput = (
+      document.getElementById('formPassword') as HTMLInputElement
+    ).value.trim();
 
-    const usuario = this.usuarios.find(u =>
-      u.email === emailInput && u.password === passwordInput
-    );
+    // Usar el servicio de autenticación (sin almacenar contraseñas)
+    const usuario = await this.authService.login(emailInput, passwordInput);
 
     if (!usuario) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Correo o contraseña incorrectos'
+        text: 'Correo o contraseña incorrectos',
       });
       return;
     }
 
-    sessionStorage.setItem('usuarioActivo', JSON.stringify(usuario));
-
+    // Redirigir según el tipo de usuario
     switch (usuario.tipo.toUpperCase()) {
       case 'CLIENTE':
         this.router.navigate(['/usuario']);
@@ -64,11 +50,15 @@ export class Login implements OnInit {
         this.router.navigate(['/admin']);
         break;
       default:
-        alert('Tipo de usuario desconocido.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Tipo de usuario desconocido',
+        });
     }
   }
-  
-  irCrearUsuario() {
+
+  irCrearUsuario(): void {
     this.router.navigate(['/crear-cuenta']);
   }
 }
