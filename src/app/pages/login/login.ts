@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
+//aqui empieza la clase que se exporta
 export class Login {
   constructor(
     private router: Router,
