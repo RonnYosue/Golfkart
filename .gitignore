@@ -40,3 +40,38 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# ==========================================
+# 🔒 ARCHIVOS DE SEGURIDAD
+# ==========================================
+# Variables de entorno y secretos
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.p12
+
+# Archivos de configuración con datos sensibles
+config/secrets.json
+config/credentials.json
+
+# Reportes de seguridad
+npm-audit-report.json
+security-report.html
+snyk-report.json
+
+# Logs que pueden contener información sensible
+*.log
+logs/
+*.pid
+
+# Bases de datos locales (si se usan)
+*.db
+*.sqlite
+*.sqlite3
+
+# ⚠️ ADVERTENCIA: usuarios.json contiene contraseñas
+# Este archivo debería estar en el backend, no en el frontend
+# public/usuarios.json
+# src/assets/json/usuarios.json

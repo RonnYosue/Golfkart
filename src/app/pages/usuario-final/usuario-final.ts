@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-declare var google: any;
-declare var Swal: any;
+declare let google: any;
+declare let Swal: any;
 
 @Component({
   selector: 'app-usuario-final',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './usuario-final.html',
-  styleUrls: ['./usuario-final.css']
+  styleUrls: ['./usuario-final.css'],
 })
 export class UsuarioFinal implements OnInit {
   @ViewChild('mapContainer', { static: true }) mapElement!: ElementRef;
@@ -25,7 +25,7 @@ export class UsuarioFinal implements OnInit {
     nombre: '',
     email: '',
     password: '',
-    tipo: ''
+    tipo: '',
   };
   modalReservaVisible = false;
   modalReservasVisible = false;
@@ -72,7 +72,7 @@ export class UsuarioFinal implements OnInit {
     { id: 45, nombre: 'FACULTAD ING INDUSTRIAL' },
     { id: 47, nombre: 'FACULTAD ECONOMIA' },
     { id: 48, nombre: 'FACCO' },
-    { id: 21, nombre: 'FACULTAD EDUCACION DOS' }
+    { id: 21, nombre: 'FACULTAD EDUCACION DOS' },
   ];
 
   reservaForm = {
@@ -80,7 +80,7 @@ export class UsuarioFinal implements OnInit {
     hora: '',
     inicioId: null,
     destinoId: null,
-    asientos: 1
+    asientos: 1,
   };
 
   ngOnInit(): void {
@@ -91,7 +91,7 @@ export class UsuarioFinal implements OnInit {
   }
 
   setSaludo() {
-    const user = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
+    const user = JSON.parse(sessionStorage.getItem('usuarioActivo') || '{}');
     if (user && user.nombre && user.tipo) {
       this.saludo = `HOLA ${user.nombre.toUpperCase()}, ${user.tipo.toUpperCase()}`;
     } else {
@@ -106,7 +106,8 @@ export class UsuarioFinal implements OnInit {
         return;
       }
       const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxCvGD2hy58PYPqccAFlGCMiI7YOX0_rQ';
+      script.src =
+        'https://maps.googleapis.com/maps/api/js?key=AIzaSyDR4QKiMi3MyISYIVYCphBN-vZgxGFUUQI';
       script.async = true;
       script.defer = true;
       script.onload = () => resolve();
@@ -119,7 +120,7 @@ export class UsuarioFinal implements OnInit {
       center: { lat: -0.9545528165209427, lng: -80.74615240570795 },
       zoom: 17,
       minZoom: 17,
-      maxZoom: 25
+      maxZoom: 25,
     });
 
     await this.cargarDatos();
@@ -130,13 +131,13 @@ export class UsuarioFinal implements OnInit {
     this.marker = new google.maps.Marker({
       position: { lat: -0.9545528165209427, lng: -80.74615240570795 },
       map: this.map,
-      title: "Haz clic para reservar este carrito",
+      title: 'Haz clic para reservar este carrito',
       icon: {
-        url: "car.png",
-        scaledSize: new google.maps.Size(50, 50)
-      }
+        url: 'car.png',
+        scaledSize: new google.maps.Size(50, 50),
+      },
     });
-    this.marker.addListener("click", () => {
+    this.marker.addListener('click', () => {
       this.mostrarModal('modalReserva');
     });
 
@@ -157,18 +158,18 @@ export class UsuarioFinal implements OnInit {
 
   cargarCarritos() {
     this.carritos = JSON.parse(localStorage.getItem('carritos') || '[]');
-    this.carritos.forEach(carrito => {
+    this.carritos.forEach((carrito) => {
       const nuevoMarker = new google.maps.Marker({
         position: { lat: carrito.lat, lng: carrito.lng },
         map: this.map,
         title: `Carrito ${carrito.id}`,
         icon: {
-          url: "car.png",
-          scaledSize: new google.maps.Size(50, 50)
-        }
+          url: 'car.png',
+          scaledSize: new google.maps.Size(50, 50),
+        },
       });
       this.carritoMarkers.push(nuevoMarker);
-      nuevoMarker.addListener("click", () => {
+      nuevoMarker.addListener('click', () => {
         this.mostrarModal('modalReserva');
       });
     });
@@ -187,30 +188,35 @@ export class UsuarioFinal implements OnInit {
   }
 
   dibujarConexiones() {
-    this.conexiones.forEach(conexion => {
-      const origen = this.nodos.find(n => n.id === Number(conexion.origen));
-      const destino = this.nodos.find(n => n.id === Number(conexion.destino));
+    this.conexiones.forEach((conexion) => {
+      const origen = this.nodos.find((n) => n.id === Number(conexion.origen));
+      const destino = this.nodos.find((n) => n.id === Number(conexion.destino));
 
       const ruta = new google.maps.Polyline({
         path: [
           { lat: origen.lat, lng: origen.lng },
-          { lat: destino.lat, lng: destino.lng }
+          { lat: destino.lat, lng: destino.lng },
         ],
         geodesic: true,
-        strokeColor: "#00bcd4",
+        strokeColor: '#00bcd4',
         strokeOpacity: 1.0,
-        strokeWeight: 3
+        strokeWeight: 3,
       });
 
       ruta.setMap(this.map);
     });
   }
 
-  dijkstra(nodos: any[], conexiones: any[], inicioId: number, destinoId: number): number[] {
+  dijkstra(
+    nodos: any[],
+    conexiones: any[],
+    inicioId: number,
+    destinoId: number,
+  ): number[] {
     // Asegura que todos los IDs sean number
     const grafo: any = {};
-    nodos.forEach(n => grafo[Number(n.id)] = []);
-    conexiones.forEach(c => {
+    nodos.forEach((n) => (grafo[Number(n.id)] = []));
+    conexiones.forEach((c) => {
       grafo[Number(c.origen)].push({ id: Number(c.destino), peso: c.peso });
       grafo[Number(c.destino)].push({ id: Number(c.origen), peso: c.peso });
     });
@@ -218,13 +224,13 @@ export class UsuarioFinal implements OnInit {
     const dist: any = {};
     const prev: any = {};
     const visitados = new Set<number>();
-    nodos.forEach(n => dist[Number(n.id)] = Infinity);
+    nodos.forEach((n) => (dist[Number(n.id)] = Infinity));
     dist[inicioId] = 0;
 
     while (visitados.size < nodos.length) {
       let u: number | null = null;
       let minDist = Infinity;
-      for (let id in dist) {
+      for (const id in dist) {
         if (!visitados.has(Number(id)) && dist[id] < minDist) {
           minDist = dist[id];
           u = Number(id);
@@ -234,7 +240,7 @@ export class UsuarioFinal implements OnInit {
       visitados.add(u);
       grafo[u].forEach((vecino: any) => {
         if (!visitados.has(vecino.id)) {
-          let alt = dist[u] + vecino.peso;
+          const alt = dist[u] + vecino.peso;
           if (alt < dist[vecino.id]) {
             dist[vecino.id] = alt;
             prev[vecino.id] = u;
@@ -243,7 +249,7 @@ export class UsuarioFinal implements OnInit {
       });
     }
 
-    let camino: number[] = [];
+    const camino: number[] = [];
     let actual: any = destinoId;
     while (actual !== undefined) {
       camino.unshift(actual);
@@ -261,7 +267,7 @@ export class UsuarioFinal implements OnInit {
           icon: 'success',
           title: '¡Llegaste al destino!',
           text: 'El carrito ha llegado a su destino correctamente.',
-          confirmButtonColor: '#00bcd4'
+          confirmButtonColor: '#00bcd4',
         });
         return;
       }
@@ -299,19 +305,19 @@ export class UsuarioFinal implements OnInit {
         icon: 'warning',
         title: 'Fecha requerida',
         text: 'Por favor, selecciona una fecha para la reserva.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
     const hoy = new Date();
-    const fechaSeleccionada = new Date(fecha + "T00:00:00");
+    const fechaSeleccionada = new Date(fecha + 'T00:00:00');
     hoy.setHours(0, 0, 0, 0);
     if (fechaSeleccionada < hoy) {
       Swal.fire({
         icon: 'warning',
         title: 'Fecha inválida',
         text: 'No puedes seleccionar una fecha en el pasado.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
@@ -320,7 +326,7 @@ export class UsuarioFinal implements OnInit {
         icon: 'warning',
         title: 'Hora requerida',
         text: 'Por favor, selecciona una hora para la reserva.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
@@ -329,7 +335,7 @@ export class UsuarioFinal implements OnInit {
         icon: 'warning',
         title: 'Ubicación requerida',
         text: 'Por favor, selecciona tanto el punto de inicio como el de destino.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
@@ -338,7 +344,7 @@ export class UsuarioFinal implements OnInit {
         icon: 'warning',
         title: 'Ubicaciones iguales',
         text: 'El punto de inicio y destino no pueden ser el mismo.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
@@ -347,33 +353,38 @@ export class UsuarioFinal implements OnInit {
         icon: 'warning',
         title: 'Cantidad de asientos inválida',
         text: 'Por favor, selecciona una cantidad de asientos válida.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
 
     // Forzar a number los IDs
-    const camino = this.dijkstra(this.nodos, this.conexiones, Number(inicioId), Number(destinoId));
+    const camino = this.dijkstra(
+      this.nodos,
+      this.conexiones,
+      Number(inicioId),
+      Number(destinoId),
+    );
     if (camino.length === 0) {
       Swal.fire({
         icon: 'error',
         title: 'Sin ruta disponible',
         text: 'No hay ruta disponible entre los puntos seleccionados.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
-    const user = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
+    const user = JSON.parse(sessionStorage.getItem('usuarioActivo') || '{}');
     const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
     const nuevaReserva = {
-      id: "reserva-" + Date.now(),
-      carritoId: "Por asignar",
+      id: 'reserva-' + Date.now(),
+      carritoId: 'Por asignar',
       clienteEmail: user.email,
       fecha,
       hora,
       inicioId: Number(inicioId),
       destinoId: Number(destinoId),
-      estado: "pendiente"
+      estado: 'pendiente',
     };
     reservas.push(nuevaReserva);
     localStorage.setItem('reservas', JSON.stringify(reservas));
@@ -382,9 +393,15 @@ export class UsuarioFinal implements OnInit {
       icon: 'success',
       title: '¡Reserva confirmada!',
       text: 'Tu reserva ha sido registrada y está pendiente de confirmación por un chofer.',
-      confirmButtonColor: '#00bcd4'
+      confirmButtonColor: '#00bcd4',
     });
-    this.reservaForm = { fecha: '', hora: '', inicioId: null, destinoId: null, asientos: 1 };
+    this.reservaForm = {
+      fecha: '',
+      hora: '',
+      inicioId: null,
+      destinoId: null,
+      asientos: 1,
+    };
   }
 
   realizarReserva() {
@@ -394,8 +411,10 @@ export class UsuarioFinal implements OnInit {
 
   mostrarReservas() {
     const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-    const user = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
-    this.reservasFiltradas = reservas.filter((r: any) => r.clienteEmail === user.email);
+    const user = JSON.parse(sessionStorage.getItem('usuarioActivo') || '{}');
+    this.reservasFiltradas = reservas.filter(
+      (r: any) => r.clienteEmail === user.email,
+    );
   }
 
   iniciarViajeCliente(reserva: any) {
@@ -404,11 +423,16 @@ export class UsuarioFinal implements OnInit {
     const destinoId = Number(reserva.destinoId);
 
     // Logs para depuración
-    const nodoInicio = this.nodos.find(n => Number(n.id) === inicioId);
-    const nodoDestino = this.nodos.find(n => Number(n.id) === destinoId);
+    const nodoInicio = this.nodos.find((n) => Number(n.id) === inicioId);
+    const nodoDestino = this.nodos.find((n) => Number(n.id) === destinoId);
     console.log('Nodo inicio:', nodoInicio, 'Nodo destino:', nodoDestino);
 
-    const camino = this.dijkstra(this.nodos, this.conexiones, inicioId, destinoId);
+    const camino = this.dijkstra(
+      this.nodos,
+      this.conexiones,
+      inicioId,
+      destinoId,
+    );
     console.log('Camino calculado:', camino);
 
     if (camino.length === 0) {
@@ -416,21 +440,21 @@ export class UsuarioFinal implements OnInit {
         icon: 'error',
         title: 'Sin ruta disponible',
         text: 'No hay ruta disponible entre los puntos seleccionados.',
-        confirmButtonColor: '#00bcd4'
+        confirmButtonColor: '#00bcd4',
       });
       return;
     }
     const path = camino.map((id: number) => {
-      const nodo = this.nodos.find(n => Number(n.id) === id);
+      const nodo = this.nodos.find((n) => Number(n.id) === id);
       return { lat: nodo.lat, lng: nodo.lng };
     });
     if (this.rutaActual) this.rutaActual.setMap(null);
     this.rutaActual = new google.maps.Polyline({
       path: path,
       geodesic: true,
-      strokeColor: "#ff0000",
+      strokeColor: '#ff0000',
       strokeOpacity: 1.0,
-      strokeWeight: 4
+      strokeWeight: 4,
     });
     this.rutaActual.setMap(this.map);
     this.moveSmoothly(this.marker, path, 0.01);
@@ -438,7 +462,7 @@ export class UsuarioFinal implements OnInit {
       icon: 'success',
       title: '¡Viaje iniciado!',
       text: 'El carrito está en camino a tu destino.',
-      confirmButtonColor: '#00bcd4'
+      confirmButtonColor: '#00bcd4',
     });
   }
 
@@ -474,117 +498,125 @@ export class UsuarioFinal implements OnInit {
   toggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
-  //funciones para editar el perfil 
+  //funciones para editar el perfil
 
-cargarDatosPerfil() {
-  const user = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
-  if (user) {
-    this.perfilForm = {
-      nombre: user.nombre || '',
-      email: user.email || '',
-      password: user.password || '',
-      tipo: user.tipo || ''
-    };
+  cargarDatosPerfil() {
+    const user = JSON.parse(sessionStorage.getItem('usuarioActivo') || '{}');
+    if (user) {
+      this.perfilForm = {
+        nombre: user.nombre || '',
+        email: user.email || '',
+        password: user.password || '',
+        tipo: user.tipo || '',
+      };
+    }
+  }
+
+  guardarPerfil() {
+    const { nombre, email, password, tipo } = this.perfilForm;
+
+    // Validaciones
+    if (!nombre.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo vacío',
+        text: 'Por favor, ingresa tu nombre.',
+      });
+      return;
+    }
+
+    if (!email.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo vacío',
+        text: 'Por favor, ingresa tu email.',
+      });
+      return;
+    }
+
+    if (!password.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo vacío',
+        text: 'Por favor, ingresa tu contraseña.',
+      });
+      return;
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Email inválido',
+        text: 'Por favor, ingresa un email válido.',
+      });
+      return;
+    }
+
+    // Obtener usuarios del localStorage
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const usuarioActivo = JSON.parse(
+      sessionStorage.getItem('usuarioActivo') || '{}',
+    );
+
+    // Verificar si el email ya existe (excepto el usuario actual)
+    const emailExiste = usuarios.find(
+      (u: any) => u.email === email && u.email !== usuarioActivo.email,
+    );
+    if (emailExiste) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Email ya existe',
+        text: 'Ya existe un usuario con ese email.',
+      });
+      return;
+    }
+
+    // Actualizar usuario en el array de usuarios
+    const indiceUsuario = usuarios.findIndex(
+      (u: any) => u.email === usuarioActivo.email,
+    );
+    if (indiceUsuario !== -1) {
+      usuarios[indiceUsuario] = {
+        ...usuarios[indiceUsuario],
+        nombre: nombre.trim(),
+        email: email.trim(),
+        password: password.trim(),
+      };
+
+      // Guardar en localStorage
+      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+      // Actualizar sessionStorage
+      const usuarioActualizado = {
+        ...usuarioActivo,
+        nombre: nombre.trim(),
+        email: email.trim(),
+        password: password.trim(),
+      };
+      sessionStorage.setItem(
+        'usuarioActivo',
+        JSON.stringify(usuarioActualizado),
+      );
+
+      // Actualizar saludo
+      this.setSaludo();
+
+      // Cerrar modal y mostrar éxito
+      this.cerrarModal('modalEditarPerfil');
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Perfil actualizado!',
+        text: 'Tus datos han sido actualizados correctamente.',
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar el perfil.',
+      });
+    }
   }
 }
-
-guardarPerfil() {
-  const { nombre, email, password, tipo } = this.perfilForm;
-
-  // Validaciones
-  if (!nombre.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo vacío',
-      text: 'Por favor, ingresa tu nombre.',
-    });
-    return;
-  }
-
-  if (!email.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo vacío',
-      text: 'Por favor, ingresa tu email.',
-    });
-    return;
-  }
-
-  if (!password.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo vacío',
-      text: 'Por favor, ingresa tu contraseña.',
-    });
-    return;
-  }
-
-  // Validar formato de email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Email inválido',
-      text: 'Por favor, ingresa un email válido.',
-    });
-    return;
-  }
-
-  // Obtener usuarios del localStorage
-  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-  const usuarioActivo = JSON.parse(sessionStorage.getItem("usuarioActivo") || '{}');
-
-  // Verificar si el email ya existe (excepto el usuario actual)
-  const emailExiste = usuarios.find((u: any) => u.email === email && u.email !== usuarioActivo.email);
-  if (emailExiste) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Email ya existe',
-      text: 'Ya existe un usuario con ese email.',
-    });
-    return;
-  }
-
-  // Actualizar usuario en el array de usuarios
-  const indiceUsuario = usuarios.findIndex((u: any) => u.email === usuarioActivo.email);
-  if (indiceUsuario !== -1) {
-    usuarios[indiceUsuario] = {
-      ...usuarios[indiceUsuario],
-      nombre: nombre.trim(),
-      email: email.trim(),
-      password: password.trim()
-    };
-
-    // Guardar en localStorage
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-    // Actualizar sessionStorage
-    const usuarioActualizado = {
-      ...usuarioActivo,
-      nombre: nombre.trim(),
-      email: email.trim(),
-      password: password.trim()
-    };
-    sessionStorage.setItem("usuarioActivo", JSON.stringify(usuarioActualizado));
-
-    // Actualizar saludo
-    this.setSaludo();
-
-    // Cerrar modal y mostrar éxito
-    this.cerrarModal('modalEditarPerfil');
-    
-    Swal.fire({
-      icon: 'success',
-      title: '¡Perfil actualizado!',
-      text: 'Tus datos han sido actualizados correctamente.',
-    });
-  } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'No se pudo actualizar el perfil.',
-    });
-  }
-}
-}
-
