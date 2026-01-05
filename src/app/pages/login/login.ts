@@ -43,7 +43,7 @@ export class Login {
       return;
     }
 
-    // Redirigir según el tipo de usuario
+    // Redirigir según el tipo de usuario autenticado
     switch (usuario.tipo.toUpperCase()) {
       case 'CLIENTE':
         this.router.navigate(['/usuario']);
